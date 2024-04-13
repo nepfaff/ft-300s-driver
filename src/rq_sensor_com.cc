@@ -1209,6 +1209,7 @@ static UINT_8 rq_com_identify_device(INT_8 const *const d_name)
 			//Try connecting to the sensor
 			if (rq_com_tentative_connexion() == 1)
 			{
+				printf("Device found on %s\n", port_com);
 				return 1;
 			}
 		}

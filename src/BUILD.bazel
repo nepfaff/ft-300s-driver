@@ -21,6 +21,7 @@ cc_binary(
     ],
     linkstatic = 1,
     deps = [
+        "//lcmtypes:ft_300s_lcmtypes",
         "@gflags//:gflags",
         "@lcm//:lcm",
     ]

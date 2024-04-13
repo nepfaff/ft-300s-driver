@@ -46,7 +46,15 @@
 #include <string.h>
 #include <stdio.h>
 #include <time.h>
+#include <assert.h>
 #include "Thread/rq_thread.h"
+
+#include <lcm/lcm-cpp.hpp>
+#include "ft_300s/ft_reading_t.hpp"
+
+using ft_300s::ft_reading_t;
+
+const char* kLcmSensorDataChannel = "FT300S_SENSOR_DATA";
 
 /**
  * \fn static void decode_message_and_do(char *buff)
@@ -100,30 +108,6 @@ static void wait_for_other_connection(){
 	}
 }
 
-/**
- * \fn void get_data(void)
- * \brief Function to retrieve the power applied to the sensor
- * \param chr_return String to return forces applied
- */
-static void get_data(INT_8 * chr_return){
-	INT_8 i;
-	INT_8 floatData[50];
-	for(i = 0; i < 6; i++){
-		sprintf(floatData, "%f", rq_state_get_received_data(i));
-		if(i == 0){
-			strcpy(chr_return, "( ");
-			strcat(chr_return, floatData);
-		}
-		else{
-			strcat(chr_return," , ");
-			strcat(chr_return,floatData);
-		}
-		if(i == 5){
-			strcat(chr_return, " )");
-		}
-	}
-}
-
  int main(){
 	 //IF can't connect with the sensor wait for another connection
 	INT_8 ret = rq_sensor_state();
@@ -143,33 +127,24 @@ static void get_data(INT_8 * chr_return){
 		wait_for_other_connection();
 	}
 
-	/*
-	 * Here comes the code to establish a connection with the application
-	*/
+	lcm::LCM lcm_;
+	assert(lcm_.good());
+	ft_reading_t ft_reading_;
 
-	//INT_8 buffer[512]; //Init of the variable receiving the message
-	INT_8 bufStream[512];
  	while(1){
- 		/*strcpy(buffer,"");
- 		*  // Here we receive the message of the application to read
- 		*  // high level variable.
- 		*if(strcmp(buffer, "") != 0)
- 		*{
- 		*	decode_message_and_do(buffer);
- 		*}
- 		*/
-
- 		ret = rq_sensor_state();
+ 	 		ret = rq_sensor_state();
  		if(ret == -1){
  			wait_for_other_connection();
  		}
  		if(rq_sensor_get_current_state() == RQ_STATE_RUN){
- 			strcpy(bufStream,"");
- 			get_data(bufStream);
- 			printf("%s\n", bufStream);
- 			/*
- 			 * Here comes the code to send the data to the application.
- 			*/
+			ft_reading_.fx = rq_state_get_received_data(0);
+			ft_reading_.fy = rq_state_get_received_data(1);
+			ft_reading_.fz = rq_state_get_received_data(2);
+			ft_reading_.tx = rq_state_get_received_data(3);
+			ft_reading_.ty = rq_state_get_received_data(4);
+			ft_reading_.tz = rq_state_get_received_data(5);
+			ft_reading_.timestamp = (int64_t)time(NULL);
+			lcm_.publish(kLcmSensorDataChannel, &ft_reading_);
  		}
  	}
  	return 0;

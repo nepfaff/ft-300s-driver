@@ -4,7 +4,8 @@ struct ft_reading_t {
     double fx;
     double fy;
     double fz;
-    double mx;
-    double my;
-    double mz;
+    double tx;
+    double ty;
+    double tz;
+    double timestamp;
 }
