@@ -1,5 +1,2 @@
 .vscode
-obj/Thread/*o
-obj/*o
-bin/*
-!bin/.hgempty
+bazel-*
