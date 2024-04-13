@@ -1,0 +1,65 @@
+# -*- python -*-
+# This file contains rules for the Bazel build system; see https://bazel.build.
+
+package(default_visibility = ["//visibility:public"])
+
+load("//tools:lcm.bzl", "lcm_cc_library", "lcm_java_library", "lcm_py_library")
+
+LCM_SRCS = [
+    "ft_reading_t.lcm",
+]
+
+# Also provide the srcs in a package-specific subdir.
+[
+    genrule(
+        name = "_cp_" + x,
+        srcs = [x],
+        outs = ["ft_300s/" + x],
+        cmd = "cp $< $@",
+        visibility = ["//visibility:private"],
+    )
+    for x in LCM_SRCS
+]
+
+filegroup(
+    name = "lcm_srcs_with_subdir",
+    srcs = [
+        ":ft_300s/" + x
+        for x in LCM_SRCS
+    ],
+)
+
+lcm_cc_library(
+    name = "ft_300s_lcmtypes",
+    lcm_package = "ft_300s",
+    lcm_srcs = LCM_SRCS,
+    linkstatic = 1,
+)
+
+filegroup(
+    name = "cxx_srcs",
+    srcs = [
+        ":ft_300s/" + x.replace(".lcm", ".hpp")
+        for x in LCM_SRCS
+    ],
+)
+
+lcm_py_library(
+    name = "py_ft_300s_lcmtypes",
+    lcm_package = "ft_300s",
+    lcm_srcs = LCM_SRCS,
+)
+
+lcm_java_library(
+    name = "lcmtypes_ft_300s",
+    lcm_package = "ft_300s",
+    lcm_srcs = LCM_SRCS,
+)
+
+filegroup(
+    name = "java_srcs",
+    srcs = [
+        ":ft_300s/" + x.replace(".lcm", ".java")
+        for x in LCM_SRCS
+    ],
+)

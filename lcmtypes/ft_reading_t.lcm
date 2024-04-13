@@ -1,0 +1,10 @@
+package ft_300s;
+
+struct ft_reading_t {
+    double fx;
+    double fy;
+    double fz;
+    double mx;
+    double my;
+    double mz;
+}

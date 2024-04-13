@@ -30,3 +30,4 @@ selecting `FT 3000-S Force Torque Sensor` -> `Other brands`.
 NOTE: It is normal for `Input/output error` to be displayed for the first few seconds.
 A permission error means that the user has not been added to the `dialout` group or
 that the computer has not been rebooted afterwards.
+The data has (Fx, Fy, Fz, Mx, My, Mz) format.
