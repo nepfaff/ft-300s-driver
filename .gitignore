@@ -1,0 +1,8 @@
+.vscode
+obj/Thread/*o
+obj/*o
+bin/*
+!bin/.hgempty
+Linux/obj/*o
+Linux/bin/*
+!Linux/bin/.hgempty
