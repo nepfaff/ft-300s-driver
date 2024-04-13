@@ -1,4 +1,4 @@
-# FT-300S Driver
+# FT-300S LCM Driver
 
 ## Installation
 
