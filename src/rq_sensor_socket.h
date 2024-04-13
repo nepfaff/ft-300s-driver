@@ -45,12 +45,6 @@
 
 #include <stdint.h>
 
-#ifdef WIN32
-
-#include <winsock2.h>
-
-#elif defined (linux)
-
 #include <sys/types.h>
 #include <sys/socket.h>
 #include <netinet/in.h>
@@ -65,20 +59,10 @@ typedef struct sockaddr_in SOCKADDR_IN;
 typedef struct sockaddr SOCKADDR;
 typedef struct in_addr IN_ADDR;
 
-#else
-
-#error not defined for this platform
-
-#endif
-
 int init_connection();
 void end_connection(int sock);
 void write_client(SOCKET sock, uint8_t *buffer);
-#ifdef __unix__ //For Unix
-	void *Read_socket(void *t);
-#elif defined(_WIN32)||defined(WIN32) //For Windows
-	void __cdecl Read_socket( void *t );
-#endif
+void *Read_socket(void *t);
 void set_socket_message_to_null(void);
 void socket_message(uint8_t * chr_return);
 int getNbClient(void);

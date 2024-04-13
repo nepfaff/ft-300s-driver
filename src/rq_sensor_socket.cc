@@ -48,14 +48,8 @@
 #include "Thread/mutex.h"
 
 //pour les mutex
-#ifdef __unix__ //For Unix
-	#include <pthread.h>
-	#define MUTEX pthread_mutex_t
-#elif defined(_WIN32)||defined(WIN32) //For Windows
-	#include <windows.h>
-	#include <process.h>
-	#define MUTEX HANDLE
-#endif
+#include <pthread.h>
+#define MUTEX pthread_mutex_t
 
 #define CRLF	 "\r\n"
 #define PORT	 63350
@@ -93,7 +87,7 @@ int init_connection() {
 
 	//Attente de connection au serveur
 	SOCKADDR_IN csin;
-	int sinsize = sizeof(csin);
+	uint sinsize = sizeof(csin);
 	c_socket_capt = accept(s_socket_stream, (SOCKADDR *)&csin, &sinsize);//accept attend la connexion d'un client
 
 	return s_socket;
@@ -122,7 +116,7 @@ static int read_client(SOCKET sock, uint8_t *buffer) {
 	}
 	else{
 		MUTEX_LOCK(&mtx);
-		strcpy(message,buffer);
+		memcpy(message, buffer, BUF_SIZE);
 		message[n] = 0;
 		MUTEX_UNLOCK(&mtx);
 		buffer[n] = 0;
@@ -139,13 +133,15 @@ static int read_client(SOCKET sock, uint8_t *buffer) {
  */
 void write_client(SOCKET sock, uint8_t *buffer) {
 	MUTEX_LOCK(&mtxWrite);
-	int ret = send(sock, buffer, strlen(buffer), MSG_DONTWAIT);
+	int ret = send(sock, reinterpret_cast<const char*>(buffer),
+        strlen(reinterpret_cast<const char*>(buffer)), MSG_DONTWAIT);
 	if(ret == -1 && errno == EAGAIN){
-		ret = send(sock, buffer, strlen(buffer), MSG_DONTWAIT);
+		ret = send(sock, reinterpret_cast<const char*>(buffer),
+            strlen(reinterpret_cast<const char*>(buffer)), MSG_DONTWAIT);
 	}
 	else if (ret == -1 && errno == ECONNRESET){
 		SOCKADDR_IN csin;
-		int sinsize = sizeof(csin);
+		uint sinsize = sizeof(csin);
 		if(sock == c_socket_capt){
 			close(c_socket_capt);
 			close(s_socket_stream);
@@ -182,11 +178,11 @@ void __cdecl Read_socket( void *t )
 #endif
 {
 	SOCKADDR_IN csin;
-	int sinsize = sizeof(csin);
+	uint sinsize = sizeof(csin);
 	char testConnexion[BUF_SIZE];
 	c_socket_acc = accept(s_socket, (SOCKADDR *)&csin, &sinsize);
 	while(1){
-		if(read_client(c_socket_acc, testConnexion)  == 0){
+		if(read_client(c_socket_acc, reinterpret_cast<uint8_t*>(testConnexion))  == 0){
 			close(c_socket_acc);
 			close(s_socket);
 			start_socket(CAPTEUR_ACCESSEUR);
@@ -214,7 +210,7 @@ void set_socket_message_to_null(void){
  */
 void socket_message(uint8_t * chr_return){
 	MUTEX_LOCK(&mtx);
-	strcpy(chr_return,message);
+    memcpy(chr_return, message, BUF_SIZE);
 	MUTEX_UNLOCK(&mtx);
 }
 
