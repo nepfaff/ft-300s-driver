@@ -45,7 +45,7 @@
 #include <stdlib.h>
 #include <errno.h>
 #include <string.h>
-#include "../../src/Thread/mutex.h"
+#include "Thread/mutex.h"
 
 //pour les mutex
 #ifdef __unix__ //For Unix

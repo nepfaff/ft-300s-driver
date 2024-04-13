@@ -4,7 +4,7 @@
 
 Make:
 ```bash
-make linux
+make all
 ```
 
 Add user to `dialout` group (replace `username` with the actual username). NOTE: Need to
@@ -25,7 +25,7 @@ selecting `FT 3000-S Force Torque Sensor` -> `Other brands`.
 ## Reading data from the sensor
 
 ```bash
-./Linux/bin/driverSensor
+./bin/ft_300s_driver
 ```
 NOTE: It is normal for `Input/output error` to be displayed for the first few seconds.
 A permission error means that the user has not been added to the `dialout` group or

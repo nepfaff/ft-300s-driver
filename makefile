@@ -4,36 +4,25 @@ OBJ = obj/
 
 .PHONY: clean
 
-################################
-# Rules to compile under linux
-linux: Linux/$(BIN)driverSensor
+all: $(BIN)ft_300s_driver
 
-Linux/$(BIN)driverSensor: Linux/$(BIN)libRQSensorLinux.a
-	gcc -c Linux/$(SRC)main.c -o Linux/$(OBJ)main.o
-	gcc Linux/$(OBJ)main.o $< -L./Linux/bin/ -lRQSensorLinux -o $@
+$(BIN)ft_300s_driver: $(BIN)libRQSensorLinux.a
+	gcc -c $(SRC)main.c -o $(OBJ)main.o
+	gcc $(OBJ)main.o $< -L./$(BIN) -lRQSensorLinux -o $@
 
-Linux/$(OBJ)%.o: Linux/$(SRC)%.c
+$(OBJ)%.o: $(SRC)%.c
 	gcc -c -Wall -std=c99 -o $@ $<
 
-# regle pour creer la libRQSensorLinux
-Linux/$(BIN)libRQSensorLinux.a: $(OBJ)rq_sensor_com.o $(OBJ)rq_sensor_state.o
-	@for i in $^; do cp $$i Linux/$$i; done
-	ar rcs $@ $(addprefix Linux/,$^)
-
-# regle pour creer la libRQSensorUR
-Linux/UR/$(BIN)libRQSensorUR.a: $(OBJ)rq_sensor_com.o $(OBJ)rq_sensor_state.o Linux/$(OBJ)rq_sensor_socket.o
+$(BIN)libRQSensorLinux.a: $(OBJ)rq_sensor_com.o $(OBJ)rq_sensor_state.o
 	ar rcs $@ $^
 
-Linux/$(OBJ)rq_sensor_socket.o:
-	gcc -c Linux/$(SRC)rq_sensor_socket.c -o Linux/$(OBJ)rq_sensor_socket.o
+$(OBJ)rq_sensor_socket.o:
+	gcc -c $(SRC)rq_sensor_socket.c -o $(OBJ)rq_sensor_socket.o
 
-# regle pour compiler les .c en .o
 $(OBJ)%.o: $(SRC)%.c
 	gcc -c -Wall -std=c99 -o $@ $<
 
 clean:
 	-rm $(OBJ)Thread/*o
 	-rm $(OBJ)*o
-	# -rm $(BIN)*
-	-rm Linux/$(OBJ)*o
-	-rm Linux/$(BIN)*
+	-rm $(BIN)*

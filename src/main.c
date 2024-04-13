@@ -40,13 +40,13 @@
  *  \maintener Nicolas Lauzier <nicolas@robotiq.com>
  */
 
-#include "../../src/rq_sensor_com.h"
-#include "../../src/rq_sensor_state.h"
-#include "../../src/rq_int.h"
+#include "rq_sensor_com.h"
+#include "rq_sensor_state.h"
+#include "rq_int.h"
 #include <string.h>
 #include <stdio.h>
 #include <time.h>
-#include "../../src/Thread/rq_thread.h"
+#include "Thread/rq_thread.h"
 
 /**
  * \fn static void decode_message_and_do(char *buff)
