@@ -16,7 +16,7 @@ sudo usermod -a -G dialout username
 Make sure that the sensor is visible. A new device named `ttyUSBx` should be present in
 `/dev`, which can be verified with the following command.
 ```bash
-ls-l /dev | grep ttyUSB
+ls -l /dev | grep ttyUSB
 ```
 
 Additional documentation can be downloaded from [here](https://robotiq.com/support) by
