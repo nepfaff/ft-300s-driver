@@ -131,6 +131,8 @@ static void wait_for_other_connection(){
 	assert(lcm_.good());
 	ft_reading_t ft_reading_;
 
+	// Zero the sensor
+	rq_set_zero();
  	while(1){
  	 		ret = rq_sensor_state();
  		if(ret == -1){
